@@ -68,3 +68,30 @@
                     `Ratio: <strong style="color:#238636">${ratio.toFixed(2)}:1</strong> <br> <span style="font-size:0.8rem; color:#8b949e">${type}</span>`;
             }
         }
+
+
+        // Power Calculation (P = V * I)
+function calcPower() {
+    const V = parseFloat(document.getElementById('p_voltage').value);
+    const I = parseFloat(document.getElementById('p_current').value);
+    
+    if(!isNaN(V) && !isNaN(I)) {
+        const P = V * I;
+        document.getElementById('power-result').innerHTML = 
+            `Power: <strong style="color:#238636">${P.toFixed(2)} W</strong>`;
+    }
+}
+
+// Capacitor Energy (E = 0.5 * C * V^2)
+function calcCapEnergy() {
+    const uF = parseFloat(document.getElementById('c_farads').value);
+    const V = parseFloat(document.getElementById('c_voltage').value);
+    
+    if(!isNaN(uF) && !isNaN(V)) {
+        // Convert microFarads to Farads
+        const C = uF / 1000000;
+        const E = 0.5 * C * (V * V);
+        document.getElementById('cap-result').innerHTML = 
+            `Energy: <strong style="color:#238636">${E.toFixed(4)} J</strong>`;
+    }
+}
