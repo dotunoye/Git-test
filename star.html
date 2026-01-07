@@ -4,68 +4,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stuff</title>
-    <style>
-        :root{
-            --bg-color: #0d1117;
-            --card-color: #161b22;
-            --accent: #238636;
-            --text-main: #c9d1d9;
-            --text-dim: #8b949e;
-            --border: #30363d;
-        }
-
-        body{
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: "Courier New", Courier, monospace;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        
-        .container{
-            background-color: var(--card-color);
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            width: 350px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        h2{
-            margin-top: 0;
-            color: var(--text-main);
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
-            font-size: 1.2rem;
-        }
-
-        .input-group{
-            margin-bottom: 15px;
-        }
-
-        label{
-            display: block;
-            margin-bottom: 5px;
-            color: var(--text-dim);
-            font-size: 0.8rem;
-        }
-
-        input{
-            width: 100%;
-            padding: 10px;
-            background-color: #0d1117;
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            border-radius: 6px;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <script src="script.js"></script>
+
+    <nav>
+        <button onclick="showPage('home')" id="nav-home" class="active">HOME</button>
+        <button onclick="showPage('electronics')" id="nav-electronics">ELECTRONICS</button>
+        <button onclick="showPage('mechanics')" id="nav-mechanics">MECHANICS</button>
+        <button onclick="showPage('robotics')" id="nav-robotics">ROBOTICS</button>
+    </nav>
+
+    <div id="home" class="page-section active">
+            <!-- Series and Parallel Resistor Calculators -->
+        <div class="container" style="margin: 20px;">
+        <h2>Series Resistance</h2>
+        <p style="font-size: 0.8rem; color: #8b949e;">Formula: R1 + R2 + R3</p>
+
+        <div class="input-group">
+            <label>Resistor 1 (&#937;)</label>
+            <input type="number" id="s_r1" placeholder="100">
+        </div>
+        <div class="input-group">
+            <label>Resistor 2 (&#937;)</label>
+            <input type="number" id="s_r2" placeholder="220">
+        </div>
+        <div class="input-group">
+            <label>Resistor 3 (&#937;)</label>
+            <input type="number" id="s_r3" placeholder="330">
+        </div>
+
+        <button onclick="calcSeries()">CALCULATE SERIES</button>
+        
+        <div class="result-box" id="series_result">
+            <strong style="font-size: 1.5rem; color: var(--accent)">0 &#937;</strong>
+        </div>
+    </div>
+
+    <div class="container" style="margin: 20px;">
+        <h2>Parallel Resistance</h2>
+        <p style="font-size: 0.8rem; color: #8b949e;">Formula: 1 / (1/R1 + 1/R2 + 1/R3)</p>
+
+        <div class="input-group">
+            <label>Resistor 1 (&#937;)</label>
+            <input type="number" id="p_r1" placeholder="100">
+        </div>
+        <div class="input-group">
+            <label>Resistor 2 (&#937;)</label>
+            <input type="number" id="p_r2" placeholder="100">
+        </div>
+        <div class="input-group">
+            <label>Resistor 3 (&#937;)</label>
+            <input type="number" id="p_r3" placeholder="100">
+        </div>
+
+        <button onclick="calcParallel()">CALCULATE PARALLEL</button>
+        
+        <div class="result-box" id="parallel_result">
+            <strong style="font-size: 1.5rem; color: var(--accent)">0 &#937;</strong>
+        </div>
+    </div>
+    <div class="calc-card" style = "margin: 20px;">
+            <h2>POWER LOAD</h2>
+            <p style="color: #8b949e; font-size: 0.8rem;">Dissipation (Watts)</p>
+            
+            <input type="number" id="p_voltage" placeholder="Voltage (V)">
+            <input type="number" id="p_current" placeholder="Current (Amps)">
+            <button class="action-btn" onclick="calcPower()">CALCULATE P</button>
+            <div class="result-text" id="power-result">P: --</div>
+        </div>
+    </div>
+
+    <div id="electronics" class="page-section">
+        
+        <div class="calc-card">
+            <h2>LED Resistor</h2>
+            <input type="number" id="sourceVoltage" placeholder="Source Voltage (Vs)">
+            <input type="number" id="ledVoltage" placeholder="LED Voltage (Vf)">
+            <input type="number" id="current" placeholder="Current (mA)">
+            <button class="action-btn" onclick="calcLED()">CALCULATE</button>
+            <p id="led-result">Result: --</p>
+        </div>
+
+        <div class="calc-card">
+            <h2>Series Resistance</h2>
+            <p style="color: #8b949e;">Add your R1 + R2 logic here...</p>
+        </div>
+    </div>
+
+    <div id="mechanics" class="page-section">
+        <div class="calc-card">
+            <h2>Gear Ratio</h2>
+            <p>Coming Soon...</p>
+        </div>
+    </div>
+
+    <div id="robotics" class="page-section">
+        <div class="calc-card">
+            <h2>Motor Torque</h2>
+            <p>Coming Soon...</p>
+        </div>
+    </div>
+
     
+
+
+
+
 </body>
 </html>
 
