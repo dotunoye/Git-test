@@ -36,39 +36,48 @@
         document.getElementById('parallel_result').style.display = 'block';
     }
 
-    // 1. The Page Switcher
-        function showPage(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page-section').forEach(page => {
-                page.classList.remove('active');
-            });
+function showPage(pageId) {
+    // 1. Hide ALL pages first
+    // This assumes all your content divs have the class "page-section"
+    const pages = document.querySelectorAll('.page-section');
+    pages.forEach(page => {
+        page.style.display = 'none';
+    });
 
-            // Deactivate all nav buttons
-            document.querySelectorAll('nav button').forEach(btn => {
-                btn.classList.remove('active');
-            });
+    // 2. Remove "active" class from ALL buttons
+    const buttons = document.querySelectorAll('nav button');
+    buttons.forEach(btn => {
+        btn.classList.remove('active');
+    });
 
-            // Show selected page
-            document.getElementById(pageId).classList.add('active');
-            
-            // Highlight selected button
-            document.getElementById('nav-' + pageId).classList.add('active');
-        }
+    // 3. Show the SPECIFIC page you clicked
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) {
+        targetPage.style.display = 'block';
+    } else {
+        console.error("Could not find page with ID:", pageId);
+    }
 
-        // Mechanics: Gear Ratio Logic
-        function calcGear() {
-            const driven = parseFloat(document.getElementById('teethDriven').value);
-            const driver = parseFloat(document.getElementById('teethDriver').value);
-
-            if(driver > 0) {
-                const ratio = driven / driver;
-                let type = ratio > 1 ? "Torque Increase (Slower)" : "Speed Increase (Faster)";
-                
-                document.getElementById('gear-result').innerHTML = 
-                    `Ratio: <strong style="color:#238636">${ratio.toFixed(2)}:1</strong> <br> <span style="font-size:0.8rem; color:#8b949e">${type}</span>`;
-            }
-        }
-
+    // 4. Highlight the clicked button
+    // We try to find the button that corresponds to this page
+    // (Assuming button ID is 'nav-' + pageId, e.g., 'nav-physics-lab')
+    // Note: You might need to adjust your button IDs to match this pattern exactly, 
+    // OR just pass 'this' into the function if you want to be simpler.
+    
+    // Simpler way: Find the button that calls this function? 
+    // Actually, let's just target the specific IDs you set up:
+    
+    let activeBtnId = "";
+    if(pageId === 'home') activeBtnId = 'nav-home';
+    if(pageId === 'electronics') activeBtnId = 'nav-electronics';
+    if(pageId === 'mechanics') activeBtnId = 'nav-mechanics';
+    if(pageId === 'robotics') activeBtnId = 'nav-robotics';
+    if(pageId === 'physics-lab') activeBtnId = 'nav-physics'; // Matches the ID in Step 1
+    if(pageId === 'physics1-lab') activeBtnId = 'nav-physics1';
+    
+    const activeBtn = document.getElementById(activeBtnId);
+    if(activeBtn) activeBtn.classList.add('active');
+}
 
         // Power Calculation (P = V * I)
 function calcPower() {
@@ -95,3 +104,144 @@ function calcCapEnergy() {
             `Energy: <strong style="color:#238636">${E.toFixed(4)} J</strong>`;
     }
 }
+
+// --- BUOYANCY SIMULATION ENGINE ---
+
+const canvas = document.getElementById('buoyancyCanvas');
+const ctx = canvas.getContext('2d');
+
+// Simulation Variables
+let objY = 50;       // Initial position
+let velocity = 0;    // Initial velocity
+let boxSize = 60;    // Size of the block (visual)
+const waterLevel = 200; // Y-coordinate where water starts
+
+// Physics Constants (Scaled for visuals)
+const g = 0.5;       // Gravity scalar for canvas
+const damping = 0.95; // Simulates water resistance/drag
+
+// Inputs
+const rhoObjInput = document.getElementById('rho-obj');
+const rhoFluidInput = document.getElementById('rho-fluid');
+
+// UI Update Loop
+function updatePhysics() {
+    // 1. Get Values
+    let rhoObj = parseInt(rhoObjInput.value);
+    let rhoFluid = parseInt(rhoFluidInput.value);
+    
+    // Update labels
+    document.getElementById('val-rho-obj').innerText = rhoObj;
+    document.getElementById('val-rho-fluid').innerText = rhoFluid;
+
+    // 2. Physics Calculation
+    // Mass is proportional to density (Assuming Volume = 1 for simplicity)
+    let mass = rhoObj / 500; 
+    let weight = mass * g;
+
+    // Buoyancy Logic
+    let submergedDepth = 0;
+    let bottomOfBox = objY + boxSize;
+
+    if (bottomOfBox > waterLevel) {
+        // Calculate how much of the box is underwater (0 to boxSize)
+        submergedDepth = Math.min(bottomOfBox - waterLevel, boxSize);
+    }
+
+    // Upthrust = DensityFluid * VolumeSubmerged * g
+    // (We scale VolumeSubmerged to be 0.0 -> 1.0 fraction of the box)
+    let volumeFraction = submergedDepth / boxSize;
+    
+    // Buoyancy Force scalar
+    let buoyancy = (rhoFluid / 500) * volumeFraction * g; 
+
+    // Net Force = W - Fb (Down is positive in Canvas Y-axis)
+    let netForce = weight - buoyancy;
+    
+    // Acceleration = F/m
+    let acceleration = netForce / mass;
+
+    // Euler Integration (Velocity & Position)
+    velocity += acceleration;
+    velocity *= damping; // Apply drag
+    objY += velocity;
+
+    // Floor Collision (Tank Bottom)
+    if (objY + boxSize > canvas.height) {
+        objY = canvas.height - boxSize;
+        velocity *= -0.5; // Bounce slightly
+    }
+
+    // 3. Update Stats Text
+    document.getElementById('stat-weight').innerText = (weight * 100).toFixed(0);
+    document.getElementById('stat-buoyancy').innerText = (buoyancy * 100).toFixed(0);
+    
+    let state = "Floating";
+    if(rhoObj > rhoFluid) state = "Sinking";
+    if(Math.abs(rhoObj - rhoFluid) < 20) state = "Neutral";
+    document.getElementById('stat-state').innerText = state;
+
+    drawFrame(submergedDepth, weight, buoyancy);
+    requestAnimationFrame(updatePhysics);
+}
+
+// Drawing Loop
+function drawFrame(submergedDepth, weight, buoyancy) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 1. Draw Water
+    ctx.fillStyle = "rgba(56, 139, 253, 0.4)"; // Transparent Blue
+    ctx.fillRect(0, waterLevel, canvas.width, canvas.height - waterLevel);
+    
+    // Water Surface Line
+    ctx.beginPath();
+    ctx.moveTo(0, waterLevel);
+    ctx.lineTo(canvas.width, waterLevel);
+    ctx.strokeStyle = "#58a6ff";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // 2. Draw The Box
+    ctx.fillStyle = "#8b949e"; // Metallic Grey
+    ctx.fillRect(canvas.width / 2 - boxSize / 2, objY, boxSize, boxSize);
+    
+    // Draw Submerged Part (Darker to show it's wet/underwater)
+    if (submergedDepth > 0) {
+        ctx.fillStyle = "rgba(33, 38, 45, 0.6)";
+        ctx.fillRect(canvas.width / 2 - boxSize / 2, objY + (boxSize - submergedDepth), boxSize, submergedDepth);
+    }
+
+    // 3. Draw Force Vectors (The Physics Lesson)
+    let centerX = canvas.width / 2;
+    let centerY = objY + boxSize / 2;
+
+    // Gravity Vector (Red, Down)
+    drawArrow(centerX, centerY, weight * 20, "red"); 
+
+    // Buoyancy Vector (Blue, Up)
+    if (buoyancy > 0) {
+        // Start arrow slightly offset so they don't overlap perfectly
+        drawArrow(centerX + 10, centerY, -buoyancy * 20, "#58a6ff"); 
+    }
+}
+
+// Helper: Draw Arrow
+function drawArrow(x, y, length, color) {
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y + length);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Arrowhead
+    ctx.beginPath();
+    ctx.moveTo(x, y + length);
+    ctx.lineTo(x - 5, y + length - (Math.sign(length) * 5));
+    ctx.lineTo(x + 5, y + length - (Math.sign(length) * 5));
+    ctx.fillStyle = color;
+    ctx.fill();
+}
+
+// Start the engine
+updatePhysics();

@@ -14,6 +14,14 @@
         <button onclick="showPage('electronics')" id="nav-electronics">ELECTRONICS</button>
         <button onclick="showPage('mechanics')" id="nav-mechanics">MECHANICS</button>
         <button onclick="showPage('robotics')" id="nav-robotics">ROBOTICS</button>
+        <button onclick="showPage('physics-lab')" id="nav-physics">PHYSICS LAB</button>
+        <button onclick="showPage('physics1-lab')" id="nav-physics1">PHYSICS</button>
+        <button onclick="showPage('home')" id="nav-home" class="active">ELECTRICITY</button>
+        <button onclick="showPage('electronics')" id="nav-electronics">ELECTRONICS</button>
+        <button onclick="showPage('mechanics')" id="nav-mechanics">MECHANICS</button>
+        <button onclick="showPage('robotics')" id="nav-robotics">ROBOTICS</button>
+        <button onclick="showPage('physics-lab')" id="nav-physics">PHYSICS LAB</button>
+        <button onclick="showPage('physics1-lab')" id="nav-physics1">PHYSICS</button>
     </nav>
 
     <div id="home" class="page-section active">
@@ -85,13 +93,41 @@
 <!-- Electricity Section End -->
 
 
-    <div id="electronics" class="page-section">
-        <div class = "scroll-container">
-        <div class="calc-card">
-           
-        </div>
+    <div id="physics-lab" class="page-section">
+       <h1 class="section-title">Physics Lab: Buoyancy</h1>
+        
+        <div class="sim-container" style="background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 20px; text-align: center;">
+            
+            <canvas id="buoyancyCanvas" width="600" height="400" style="background: #161b22; border-radius: 4px; box-shadow: inset 0 0 10px #000;"></canvas>
+
+            <div class="controls" style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left;">
+                
+                <div class="control-group">
+                    <label style="color: #c9d1d9;">Object Density (kg/m³): <span id="val-rho-obj" style="color: #58a6ff;">700</span></label>
+                    <input type="range" id="rho-obj" min="100" max="2000" value="500" step="10" style="width: 100%;">
+                    <p style="font-size: 0.8rem; color: #8b949e;">
+                        &lt; 1000 = Floats | &gt; 1000 = Sinks
+                    </p>
+                </div>
+
+                <div class="control-group">
+                    <label style="color: #c9d1d9;">Fluid Density (kg/m³): <span id="val-rho-fluid" style="color: #58a6ff;">1000</span></label>
+                    <input type="range" id="rho-fluid" min="500" max="1500" value="1000" step="10" style="width: 100%;">
+                    <p style="font-size: 0.8rem; color: #8b949e;">
+                        Water &#8776; 1000 kg/m³
+                    </p>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px; padding: 10px; background: #21262d; border-radius: 4px; display: flex; justify-content: space-around; font-family: monospace;">
+                <span style="color: #ff7b72;">Weight (W): <span id="stat-weight">0</span> N</span>
+                <span style="color: #79c0ff;">Upthrust (Fb): <span id="stat-buoyancy">0</span> N</span>
+                <span style="color: #d2a8ff;">Status: <span id="stat-state">--</span></span>
+            </div>
+
         </div>
     </div>
+    
 
     <!-- Mechanics Section -->
    <div id="mechanics" class="page-section">
@@ -147,8 +183,52 @@
 
 
 
-
+</main>
+    <script src="script.js"></script>
 </body>
 </html>
 
 
+
+
+    <!-- Header with Search & Hamburger 
+    <header class="top-header">
+        <div class="header-content">
+            <div class="header-left">
+                <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+                <h1 class="site-title">FLAVORTOWN</h1>
+            </div>
+            <input type="text" id="global-search" class="search-input" placeholder="🔍 Search calculators...">
+        </div>
+    </header>
+    -->
+
+    <!-- Mobile Drawer Menu 
+    <nav class="mobile-drawer" id="mobile-drawer">
+        <button onclick="showPage('home'); toggleMobileMenu();" id="nav-home-mobile" class="drawer-btn active">ELECTRICITY</button>
+        <button onclick="showPage('electronics'); toggleMobileMenu();" id="nav-electronics-mobile" class="drawer-btn">ELECTRONICS</button>
+        <button onclick="showPage('mechanics'); toggleMobileMenu();" id="nav-mechanics-mobile" class="drawer-btn">MECHANICS</button>
+        <button onclick="showPage('robotics'); toggleMobileMenu();" id="nav-robotics-mobile" class="drawer-btn">ROBOTICS</button>
+        <button onclick="showPage('physics-lab'); toggleMobileMenu();" id="nav-physics-mobile" class="drawer-btn">PHYSICS LAB</button>
+        <button onclick="showPage('physics1-lab'); toggleMobileMenu();" id="nav-physics1-mobile" class="drawer-btn">PHYSICS</button>
+    </nav>
+    -->
+    <!-- Desktop Navbar (Horizontal Scrollable) 
+    <nav class="desktop-nav">
+        <div class="nav-scroll-container">
+            <button onclick="showPage('home')" id="nav-home" class="nav-btn active">ELECTRICITY</button>
+            <button onclick="showPage('electronics')" id="nav-electronics" class="nav-btn">ELECTRONICS</button>
+            <button onclick="showPage('mechanics')" id="nav-mechanics" class="nav-btn">MECHANICS</button>
+            <button onclick="showPage('robotics')" id="nav-robotics" class="nav-btn">ROBOTICS</button>
+            <button onclick="showPage('physics-lab')" id="nav-physics" class="nav-btn">PHYSICS LAB</button>
+            <button onclick="showPage('physics1-lab')" id="nav-physics1" class="nav-btn">PHYSICS</button>
+        </div>
+    </nav>
+    -->
+    <!-- Main Content Area 
+    <main class="main-content">
+        -->
